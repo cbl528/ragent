@@ -13,14 +13,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
+import okio.BufferedSource;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -88,6 +87,63 @@ public abstract class AbstractOpenAIStyleChatClient implements ChatClient {
         }
 
         return extractChatContent(respJson);
+    }
+
+    private void doStream(Call call, StreamCallback callback, AtomicBoolean cancelled, boolean reasoningEnabled) {
+        try (Response response = call.execute()) {
+            if (!response.isSuccessful()) {
+                String body = HttpResponseHelper.readBody(response.body());
+                throw new ModelClientException(
+                        provider() + " 流式请求失败: HTTP " + response.code() + " - " + body,
+                        ModelClientErrorType.fromHttpStatus(response.code()),
+                        response.code()
+                );
+            }
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new ModelClientException(provider() + " 流式响应为空", ModelClientErrorType.INVALID_RESPONSE, null);
+            }
+            BufferedSource source = body.source();
+            boolean completed = false;
+            while (!cancelled.get()) {
+                String line = source.readUtf8Line();
+                if (line == null) {
+                    break;
+                }
+                if (line.isBlank()) {
+                    continue;
+                }
+                try {
+                    OpenAIStyleSseParser.ParsedEvent event = OpenAIStyleSseParser.parseLine(line, gson, reasoningEnabled);
+                    if (event.hasReasoning()) {
+                        callback.onThinking(event.reasoning());
+                    }
+                    if (event.hasContent()) {
+                        callback.onContent(event.content());
+                    }
+                    if (event.completed()) {
+                        callback.onComplete();
+                        completed = true;
+                        break;
+                    }
+                } catch (Exception parseEx) {
+                    log.warn("{} 流式响应解析失败: line={}", provider(), line, parseEx);
+                }
+            }
+            if (cancelled.get()) {
+                log.info("{} 流式响应已被取消", provider());
+                return;
+            }
+            if (!completed) {
+                throw new ModelClientException(provider() + " 流式响应异常结束", ModelClientErrorType.INVALID_RESPONSE, null);
+            }
+        } catch (Exception e) {
+            if (!cancelled.get()) {
+                callback.onError(e);
+            } else {
+                log.info("{} 流式响应取消期间产生异常（可忽略）: {}", provider(), e.getMessage());
+            }
+        }
     }
 
     // ==================== 公共构建方法 ====================
