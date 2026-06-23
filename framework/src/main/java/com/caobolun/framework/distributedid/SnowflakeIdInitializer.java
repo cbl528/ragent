@@ -3,6 +3,7 @@ package com.caobolun.framework.distributedid;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.Snowflake;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +22,8 @@ public class SnowflakeIdInitializer {
 
     private final StringRedisTemplate stringRedisTemplate;
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @PostConstruct
     public void init(){
         // 加载Lua脚本
         DefaultRedisScript<List> script = new DefaultRedisScript<>();
