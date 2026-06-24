@@ -3,6 +3,18 @@ spring:
     name: bootstrap
 server:
   port: 8001
+
+# 是否开启Trace
 rag:
   trace:
     enabled: false
+
+# SaToken配置
+sa-token:
+  token-name: Authorization
+  timeout: 2592000
+  is-concurrent: true
+  is-share: false
+  token-style: simple-uuid
+  is-log: false
+  is-print: false
