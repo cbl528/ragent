@@ -8,7 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(scanBasePackages = "com.caobolun")
 @EnableScheduling
 @MapperScan(basePackages = {
-        "com.caobolun.bootstrap.rag.mapper"
+        "com.caobolun.bootstrap.rag.mapper",
+        "com.caobolun.bootstrap.user.mapper"
 })
 public class BootstrapApplication {
 
