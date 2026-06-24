@@ -23,7 +23,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
     private final UserMapper userMapper;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 异步调度请求跳过（SSE 完成回调会触发 asyncDispatch，此时 SaToken 上下文已丢失）
         if (request.getDispatcherType() == DispatcherType.ASYNC) {
             return true;
@@ -38,7 +38,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
 
         UserContext.set(
                 LoginUser.builder()
-                        .userId(user.getId().toString())
+                        .userId(user.getId())
                         .username(user.getUsername())
                         .role(user.getRole())
                         .avatar(StrUtil.isBlank(user.getAvatar()) ? DEFAULT_AVATAR_URL : user.getAvatar())
@@ -48,7 +48,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) {
         UserContext.clear();
     }
 }
