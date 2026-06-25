@@ -33,3 +33,6 @@ build/
 .vscode/
 
 /resources/*.md
+
+### Playwright MCP ###
+.playwright-mcp/
