@@ -43,7 +43,7 @@ public class StreamTaskManager {
                 return;
             }
             cancelLocal(taskId);
-        })
+        });
     }
 
     private void cancelLocal(String taskId) {

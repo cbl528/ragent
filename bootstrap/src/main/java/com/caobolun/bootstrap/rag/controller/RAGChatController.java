@@ -20,7 +20,7 @@ public class RAGChatController {
     private final RAGDefaultProperties ragDefaultProperties;
 
     @IdempotentSubmit(
-            key = "T(com.nageoffer.ai.ragent.framework.context.UserContext).getUserId()",
+            key = "T(com.caobolun.framework.context.UserContext).getUserId()",
             message = "当前会话处理中，请稍后再发起新的对话"
     )
     @GetMapping(value = "/rag/v3/chat", produces = "text/event-stream;charset=UTF-8")
