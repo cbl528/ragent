@@ -1,5 +1,12 @@
 package com.caobolun.bootstrap.core.prompt;
 
+import com.caobolun.bootstrap.core.intent.NodeScore;
+import com.caobolun.framework.convention.RetrievedChunk;
+import io.modelcontextprotocol.spec.McpSchema;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 上下文格式化器，负责将知识库检索结果和 MCP 工具调用结果格式化为可嵌入 Prompt 的文本
  */
@@ -22,5 +29,5 @@ public interface ContextFormatter {
      * @param mcpIntents  MCP 意图节点及其得分列表
      * @return 格式化后的 MCP 上下文文本
      */
-    String formatMcpContext(Map<String, List<CallToolResult>> toolResults, List<NodeScore> mcpIntents);
+    String formatMcpContext(Map<String, List<McpSchema.CallToolResult>> toolResults, List<NodeScore> mcpIntents);
 }

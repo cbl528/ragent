@@ -1,7 +1,6 @@
 package com.caobolun.bootstrap.rag.handler;
 
 import com.caobolun.bootstrap.rag.service.ConversationGroupService;
-import com.caobolun.bootstrap.rag.service.ConversationMemoryService;
 import com.caobolun.infraai.config.AIModelProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
