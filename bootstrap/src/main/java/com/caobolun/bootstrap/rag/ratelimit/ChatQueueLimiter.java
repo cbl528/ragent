@@ -1,15 +1,29 @@
 package com.caobolun.bootstrap.rag.ratelimit;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import com.caobolun.bootstrap.core.enums.SSEEventType;
 import com.caobolun.bootstrap.core.memory.ConversationMemoryService;
 import com.caobolun.bootstrap.rag.config.MemoryProperties;
 import com.caobolun.bootstrap.rag.config.RAGRateLimitProperties;
+import com.caobolun.bootstrap.rag.dto.CompletionPayload;
+import com.caobolun.bootstrap.rag.dto.MessageDelta;
+import com.caobolun.bootstrap.rag.dto.MetaPayload;
+import com.caobolun.bootstrap.rag.ratelimit.FairDistributedRateLimiter.AcquireRequest;
 import com.caobolun.bootstrap.rag.service.ConversationGroupService;
+import com.caobolun.framework.context.UserContext;
+import com.caobolun.framework.convention.ChatMessage;
+import com.caobolun.framework.web.SSEEmitterSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * SSE 全局并发限流入口
@@ -108,7 +122,7 @@ public class ChatQueueLimiter {
     }
 
     private void sendRejectEvents(SseEmitter emitter, RejectedContext rejectedContext) {
-        SseEmitterSender sender = new SseEmitterSender(emitter);
+        SSEEmitterSender sender = new SSEEmitterSender(emitter);
         if (rejectedContext != null) {
             sender.sendEvent(SSEEventType.META.value(), new MetaPayload(rejectedContext.conversationId, rejectedContext.taskId));
             sender.sendEvent(SSEEventType.REJECT.value(), new MessageDelta(RESPONSE_TYPE, REJECT_MESSAGE));
