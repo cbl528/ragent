@@ -3,22 +3,50 @@ package com.caobolun.bootstrap.core.parser.mineru;
 import com.caobolun.bootstrap.core.parser.model.*;
 import com.caobolun.bootstrap.core.parser.model.Block;
 import com.caobolun.bootstrap.core.parser.model.ListBlock;
-import com.caobolun.bootstrap.core.parser.model.TableBlock;
+import com.caobolun.bootstrap.rag.dto.StoredFileDTO;
 import com.caobolun.bootstrap.rag.service.FileStorageService;
 import com.caobolun.framework.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
-import org.commonmark.ext.gfm.tables.*;
-import org.commonmark.node.*;
+import org.commonmark.ext.gfm.tables.TableBlock;
+import org.commonmark.ext.gfm.tables.TableBody;
+import org.commonmark.ext.gfm.tables.TableCell;
+import org.commonmark.ext.gfm.tables.TableHead;
+import org.commonmark.ext.gfm.tables.TableRow;
+import org.commonmark.ext.gfm.tables.TablesExtension;
+import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.BulletList;
+import org.commonmark.node.Code;
+import org.commonmark.node.CustomBlock;
+import org.commonmark.node.Document;
+import org.commonmark.node.Emphasis;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.HardLineBreak;
+import org.commonmark.node.Heading;
+import org.commonmark.node.HtmlBlock;
+import org.commonmark.node.Image;
+import org.commonmark.node.IndentedCodeBlock;
+import org.commonmark.node.Link;
+import org.commonmark.node.ListItem;
+import org.commonmark.node.Node;
+import org.commonmark.node.OrderedList;
+import org.commonmark.node.Paragraph;
+import org.commonmark.node.SoftLineBreak;
+import org.commonmark.node.StrongEmphasis;
+import org.commonmark.node.Text;
+import org.commonmark.parser.Parser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.commonmark.parser.Parser;
 
-import javax.swing.text.Document;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -403,7 +431,7 @@ public class MinerUResultUnpacker {
                 child = child.getNext();
             }
 
-            blocks.add(new TableBlock(
+            blocks.add(new com.caobolun.bootstrap.core.parser.model.TableBlock(
                     UUID.randomUUID().toString(),
                     provenance,
                     List.of(),

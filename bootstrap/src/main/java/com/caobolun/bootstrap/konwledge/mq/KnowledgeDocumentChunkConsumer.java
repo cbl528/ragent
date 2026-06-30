@@ -1,5 +1,10 @@
 package com.caobolun.bootstrap.konwledge.mq;
 
+import com.caobolun.bootstrap.konwledge.mq.event.KnowledgeDocumentChunkEvent;
+import com.caobolun.bootstrap.konwledge.service.KnowledgeDocumentService;
+import com.caobolun.framework.context.LoginUser;
+import com.caobolun.framework.context.UserContext;
+import com.caobolun.framework.mq.MessageWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;

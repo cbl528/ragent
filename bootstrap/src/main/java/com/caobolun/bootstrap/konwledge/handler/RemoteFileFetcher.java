@@ -1,12 +1,25 @@
 package com.caobolun.bootstrap.konwledge.handler;
 
+import com.caobolun.bootstrap.ingestion.util.HttpClientHelper;
 import com.caobolun.bootstrap.rag.dto.StoredFileDTO;
 import com.caobolun.bootstrap.rag.service.FileStorageService;
+import com.caobolun.framework.exception.ClientException;
+import com.caobolun.framework.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.util.unit.DataSize;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 /**
  * 远程文件拉取服务

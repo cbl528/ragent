@@ -30,7 +30,7 @@ public class RocketMQProducerAdapter implements MessageQueueProducer {
      * @param keys    业务 key，可用于幂等判断
      * @param bizDesc 业务描述，用于日志标识
      * @param body    业务载荷
-     * @return
+     * @return SendResult
      */
     @Override
     public SendResult send(String topic, String keys, String bizDesc, Object body) {

@@ -1,6 +1,11 @@
 package com.caobolun.bootstrap.konwledge.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeChunkBatchRequest;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeChunkCreateRequest;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeChunkPageRequest;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeChunkUpdateRequest;
+import com.caobolun.bootstrap.konwledge.dto.vo.KnowledgeChunkVO;
 
 import java.util.List;
 

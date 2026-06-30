@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @MapperScan(basePackages = {
         "com.caobolun.bootstrap.rag.mapper",
-        "com.caobolun.bootstrap.user.mapper"
+        "com.caobolun.bootstrap.user.mapper",
+        "com.caobolun.bootstrap.konwledge.mapper",
+        "com.caobolun.bootstrap.ingestion.mapper"
 })
 public class BootstrapApplication {
 

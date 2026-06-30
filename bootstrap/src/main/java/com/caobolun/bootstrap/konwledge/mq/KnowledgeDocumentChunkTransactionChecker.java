@@ -1,6 +1,13 @@
 package com.caobolun.bootstrap.konwledge.mq;
 
 import cn.hutool.json.JSONUtil;
+import com.caobolun.bootstrap.konwledge.entity.KnowledgeDocumentDO;
+import com.caobolun.bootstrap.konwledge.enums.DocumentStatus;
+import com.caobolun.bootstrap.konwledge.mapper.KnowledgeDocumentMapper;
+import com.caobolun.bootstrap.konwledge.mq.event.KnowledgeDocumentChunkEvent;
+import com.caobolun.framework.mq.MessageWrapper;
+import com.caobolun.framework.mq.producer.DelegatingTransactionListener;
+import com.caobolun.framework.mq.producer.TransactionChecker;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

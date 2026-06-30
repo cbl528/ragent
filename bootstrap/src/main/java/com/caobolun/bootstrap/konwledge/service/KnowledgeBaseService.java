@@ -1,6 +1,10 @@
 package com.caobolun.bootstrap.konwledge.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeBaseCreateRequest;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeBasePageRequest;
+import com.caobolun.bootstrap.konwledge.dto.request.KnowledgeBaseUpdateRequest;
+import com.caobolun.bootstrap.konwledge.dto.vo.KnowledgeBaseVO;
 
 /**
  * 知识库服务接口
