@@ -2,9 +2,9 @@ package com.caobolun.bootstrap.user.service.impl;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.caobolun.bootstrap.user.dto.resquest.ChangePasswordRequest;
 import com.caobolun.bootstrap.user.dto.resquest.UserCreateRequest;
 import com.caobolun.bootstrap.user.dto.resquest.UserPageRequest;
@@ -31,19 +31,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public IPage<UserVO> pageQuery(UserPageRequest requestParam) {
         String keyWord = StrUtil.trimToNull(requestParam.getKeyword());
-        Page<UserDO> page = new Page<>(requestParam.getCurrent(), requestParam.getPages());
-        IPage<UserDO> selectPage = userMapper.selectPage(
-                page,
-                Wrappers.lambdaQuery(UserDO.class)
-                        .eq(UserDO::getDeleted, 0)
-                        .and(StrUtil.isNotBlank(keyWord), wrapper -> wrapper
-                                .like(UserDO::getUsername, keyWord)
-                                .or()
-                                .like(UserDO::getRole, keyWord)
-                        )
-                        .orderByDesc(UserDO::getUpdateTime)
-        );
-        // 将Page中的UserDO转化为UserVO,IPage的convert方法会根据你传入的转化函数遍历其中的对象进行转换
+        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
+                .orderByDesc(UserDO::getUpdateTime);
+
+        // 关键字不为空时，拼接 (username like ? or role like ?)
+        if (StrUtil.isNotBlank(keyWord)) {
+            wrapper.nested(w -> w.like(UserDO::getUsername, keyWord).or().like(UserDO::getRole, keyWord));
+        }
+
+        IPage<UserDO> selectPage = userMapper.selectPage(requestParam, wrapper);
         return selectPage.convert(this::toVO);
     }
 
