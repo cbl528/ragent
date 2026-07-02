@@ -74,8 +74,7 @@ public class ChatQueueLimiter {
                     emitter.onCompletion(cancel);
                     emitter.onTimeout(cancel);
                     emitter.onError(e -> cancel.run());
-                })
-                .build());
+                }).build());
     }
 
     // ==================== Reject 业务 ====================

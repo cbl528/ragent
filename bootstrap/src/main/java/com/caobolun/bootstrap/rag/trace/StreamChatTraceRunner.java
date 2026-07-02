@@ -54,8 +54,8 @@ public class StreamChatTraceRunner {
         // Trace开启：记录 run 开始
         String traceId = IdUtil.getSnowflakeNextIdStr();
         long startMillis = System.currentTimeMillis();
-        // Trace 开启：创建RagTraceRunDO记录
-        traceRecordService.startRun(RagTraceRunDO.builder()
+        // Trace 开启
+        traceRecordService.startRun(RagTraceRunDO.builder() // 新增TraceRun节点到数据库
                 .traceId(traceId)
                 .traceName(TRACE_NAME)
                 .entryMethod(ENTRY_METHOD)
@@ -70,7 +70,7 @@ public class StreamChatTraceRunner {
                         .toString())
                 .build());
 
-        Date runStartTime = new Date(startMillis);
+        Date runStartTime = new Date(startMillis); // 节点开启时间
         StreamCallback traceAwareCallback = new ForwardingStreamCallback(callback) {
             @Override
             protected void onFirstContent() {

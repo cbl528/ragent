@@ -63,10 +63,11 @@ public class StreamTaskManager {
         StreamTaskInfo taskInfo = getOrCreate(taskId);
         taskInfo.sender = sender;
         taskInfo.onCancelSupplier = onCancelSupplier;
+        // 判断任务是否被取消
         if (isTaskCancelledInRedis(taskId, taskInfo)) {
-            CompletionPayload payload = taskInfo.onCancelSupplier.get();
-            sendCancelAndDone(sender, payload);
-            sender.complete();
+            CompletionPayload payload = taskInfo.onCancelSupplier.get(); // 获取取消时的 payload
+            sendCancelAndDone(sender, payload); // 发送取消和完成事件
+            sender.complete(); // 完成发送
         }
     }
 
@@ -98,12 +99,13 @@ public class StreamTaskManager {
      * 如果是，会同步状态到本地缓存
      */
     private boolean isTaskCancelledInRedis(String taskId, StreamTaskInfo taskInfo) {
+        // 如果本地已经标记为取消，则直接返回
         if (taskInfo.cancelled.get()) {
             return true;
         }
-
+        // 检查 Redis 取消标记
         RBucket<Boolean> bucket = redissonClient.getBucket(cancelKey(taskId));
-        Boolean cancelled = bucket.get();
+        Boolean cancelled = bucket.get(); // 获取 Redis 中的标记
         if (Boolean.TRUE.equals(cancelled)) {
             taskInfo.cancelled.set(true);
             return true;
@@ -147,8 +149,11 @@ public class StreamTaskManager {
     }
 
     private void sendCancelAndDone(SSEEmitterSender sender, CompletionPayload payload) {
+        // 确保 payload 不为空
         CompletionPayload actualPayload = payload == null ? new CompletionPayload(null, null) : payload;
+        // 发送取消事件
         sender.sendEvent(SSEEventType.CANCEL.value(), actualPayload);
+        // 发送完成事件
         sender.sendEvent(SSEEventType.DONE.value(), "[DONE]");
     }
 

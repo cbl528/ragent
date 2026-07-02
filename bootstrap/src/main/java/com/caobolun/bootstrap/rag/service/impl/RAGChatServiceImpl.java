@@ -19,10 +19,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class RAGChatServiceImpl implements RAGChatService {
 
-    private final StreamChatPipeline streamChatPipeline;
-    private final ChatQueueLimiter chatQueueLimiter;
-    private final StreamCallbackFactory callbackFactory;
-    private final StreamChatTraceRunner chatTraceRunner;
+    private final StreamChatPipeline streamChatPipeline; // 流式聊天管道
+    private final ChatQueueLimiter chatQueueLimiter; // 聊天队列限流器
+    private final StreamCallbackFactory callbackFactory; // 流式回调处理器工厂
+    private final StreamChatTraceRunner chatTraceRunner; // 聊天跟踪运行器
     private final StreamTaskManager taskManager;
 
     @Override
@@ -33,9 +33,9 @@ public class RAGChatServiceImpl implements RAGChatService {
         String taskId = IdUtil.getSnowflakeNextIdStr();
         // 创建流式回调处理器
         StreamCallback callback = callbackFactory.createChatEventHandler(emitter, actualConversationId, taskId);
-        // 排队限流 ——> Trace包装 -> pipeline执行
-        chatQueueLimiter.enqueue(question, actualConversationId, emitter,
-                () -> chatTraceRunner.run(question, actualConversationId, taskId, callback, traceAware -> {
+        chatQueueLimiter.enqueue(question, actualConversationId, emitter, // 排队限流
+                () -> chatTraceRunner.run(question, actualConversationId, taskId, callback, // 全链路跟踪
+                        traceAware -> { // 真正的业务逻辑
                     StreamChatContext context = StreamChatContext.builder()
                             .question(question)
                             .conversationId(actualConversationId)
